@@ -10,4 +10,8 @@ class Zip
     self.mongo_client['zips']
   end
 
+  def self.all(prototype = {}, sort={:population => 1}, offset=0, limit=100)
+    self.collection.find(prototype).sort(sort).skip(offset).limit(limit)
+  end
+
 end
