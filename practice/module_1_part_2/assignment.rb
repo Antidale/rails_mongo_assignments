@@ -60,43 +60,45 @@ class Solution
   #
 
   def all(prototype={})
-    #place solution here
+    @coll.find(prototype)
   end
 
   def find_by_name(fname, lname)
-    #place solution here
+    @coll.find(:first_name => fname, :last_name => lname).projection(
+      first_name: true, last_name: true, number: true, _id: false
+    )
   end
 
   #
   # Lecture 3: Paging
   #
 
-  def find_group_results(group, offset, limit) 
-    #place solution here
+  def find_group_results(group, offset, limit)
+    @coll.find(:group => group).projection(group: false, _id: false).sort(secs: 1).skip(offset).limit(limit)
   end
 
   #
   # Lecture 4: Find By Criteria
   #
 
-  def find_between(min, max) 
-    #place solution here
+  def find_between(min, max)
+    @coll.find(:secs => {:$gt => min, :$lt => max})
   end
 
-  def find_by_letter(letter, offset, limit) 
-    #place solution here
+  def find_by_letter(letter, offset, limit)
+    @coll.find(:last_name => {:$regex => "^#{letter}"}).sort(last_name: 1).skip(offset).limit(limit)
   end
 
   #
   # Lecture 5: Updates
   #
-  
+
   def update_racer(racer)
-    #place solution here
+    @coll.find(:_id => racer[:_id]).replace_one(racer)
   end
 
   def add_time(number, secs)
-    #place solution here
+    @coll.update_one({:number => number}, :$inc => {secs: secs})
   end
 
 end
