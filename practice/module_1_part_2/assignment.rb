@@ -15,7 +15,7 @@ class Solution
   # using the default.
   def self.mongo_client
     url=ENV['MONGO_URL'] ||= MONGO_URL
-    database=ENV['MONGO_DATABASE'] ||= MONGO_DATABASE 
+    database=ENV['MONGO_DATABASE'] ||= MONGO_DATABASE
     db = Mongo::Client.new(url)
     @@db=db.use(database)
   end
@@ -26,9 +26,9 @@ class Solution
     collection=ENV['RACE_COLLECTION'] ||= RACE_COLLECTION
     return mongo_client[collection]
   end
-  
+
   # helper method that will load a file and return a parsed JSON document as a hash
-  def self.load_hash(file_path) 
+  def self.load_hash(file_path)
     file=File.read(file_path)
     JSON.parse(file)
   end
@@ -44,14 +44,15 @@ class Solution
 
   def clear_collection
     #place solution here
+    @coll.delete_many({})
   end
 
-  def load_collection(file_path) 
-    #place solution here
+  def load_collection(file_path)
+    @coll.insert_many(self.class.load_hash(file_path))
   end
 
   def insert(race_result)
-    #place solution here
+    @coll.insert_one race_result
   end
 
   #
