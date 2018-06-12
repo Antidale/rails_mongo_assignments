@@ -15,8 +15,8 @@ describe Solution do
 
   around :each do |example|
     if $continue
-      $continue = false 
-      example.run 
+      $continue = false
+      example.run
       $continue = true unless example.exception
     else
       example.skip
@@ -28,8 +28,8 @@ describe Solution do
       expect(solution).to respond_to(:racer_names)
     end
 
-    it "Instance method racer_names takes no parameters" do 
-      expect(Solution.instance_method(:racer_names).parameters.flatten.count).to eq 0 
+    it "Instance method racer_names takes no parameters" do
+      expect(Solution.instance_method(:racer_names).parameters.flatten.count).to eq 0
     end
 
     it "racer_names accesses all racers" do
@@ -47,14 +47,14 @@ describe Solution do
       end
     end
   end
-  
+
   context "rq02" do
     it "Solution implements an instance method called id_number_map" do
       expect(solution).to respond_to(:id_number_map)
     end
 
-    it "Instance method id_number_map takes no parameters" do 
-      expect(Solution.instance_method(:id_number_map).parameters.flatten.count).to eq 0 
+    it "Instance method id_number_map takes no parameters" do
+      expect(Solution.instance_method(:id_number_map).parameters.flatten.count).to eq 0
     end
 
     it "id_number_map accesses all racers" do
@@ -80,8 +80,8 @@ context "rq03" do
       expect(solution).to respond_to(:concat_names)
     end
 
-    it "Instance method concat_names takes no parameters" do 
-      expect(Solution.instance_method(:concat_names).parameters.flatten.count).to eq 0 
+    it "Instance method concat_names takes no parameters" do
+      expect(Solution.instance_method(:concat_names).parameters.flatten.count).to eq 0
     end
 
     it "concat_names accesses all racers" do
