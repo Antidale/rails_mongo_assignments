@@ -3,7 +3,7 @@ class Place
   attr_accessor :id, :formatted_address, :location, :address_components
 
   def initialize params
-    @id = params[:_id].nil? ? params[:id] : params[:_id].to_s
+    @id = params[:_id].to_s
     @location = Point.new params[:geometry][:geolocation]
 
     @address_components = params[:address_components].collect { |ac| AddressComponent.new(ac)}
@@ -29,5 +29,14 @@ class Place
   def self.to_places input
     input.collect { |i| Place.new i }
   end
+
+  def self.find id
+    Place.new self.collection.find(_id: BSON::ObjectId.from_string(id)).first
+  end
+
+  def self.all offset = 0, limit = 0
+    self.collection.find.skip(offset).limit(limit).collect { |p| Place.new p }
+  end
+
 
 end
