@@ -31,12 +31,61 @@ class Place
   end
 
   def self.find id
-    Place.new self.collection.find(_id: BSON::ObjectId.from_string(id)).first
+    result = self.collection.find(_id: BSON::ObjectId.from_string(id)).first
+    result.nil? ? nil : Place.new(result)
   end
 
   def self.all offset = 0, limit = 0
     self.collection.find.skip(offset).limit(limit).collect { |p| Place.new p }
   end
 
+  def self.get_address_components sort = nil, offset = nil, limit = nil
+    agg = self.collection.find.aggregate([
+      { :$unwind => "$address_components" },
+      { :$project =>
+        { :_id => 1,
+          :address_components => 1,
+          :formatted_address => 1,
+          "geometry.geolocation" => 1 }
+      }])
+
+    agg.pipeline << {:$sort => sort} if sort
+    agg.pipeline << {:$skip => offset} if offset
+    agg.pipeline << {:$limit => limit} if limit
+    agg
+  end
+
+  def self.get_country_names
+    self.collection.find.aggregate([
+      {:$unwind => "$address_components"},
+      {:$unwind => "$address_components.types"},
+      {:$project => {
+        :_id => false,
+        :types => "$address_components.types",
+        :long_name => "$address_components.long_name"}
+      },
+      {:$match => {"types" => 'country'}},
+      {:$group => { :_id =>  "$long_name"}}
+    ]).collect{ |doc| doc[:_id] }
+  end
+
+  def self.find_ids_by_country_code country_code
+    self.collection.find.aggregate([
+      {:$match => {"address_components.short_name" => country_code}},
+      {:$project => {:_id => true}}
+    ]).collect{ | doc | doc[:_id].to_s}
+  end
+
+  def self.create_indexes
+    self.collection.indexes.create_one({"geometry.geolocation" => Mongo::Index::GEO2DSPHERE})
+  end
+
+  def self.remove_indexes
+    self.collection.indexes.drop_one("geometry.geolocation_2dsphere")
+  end
+
+  def destroy
+    self.class.collection.delete_one(_id: BSON::ObjectId.from_string(@id))
+  end
 
 end
