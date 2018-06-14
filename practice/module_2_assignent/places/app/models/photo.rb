@@ -11,8 +11,13 @@ class Photo
     @id = params[:_id].nil? ? nil : params[:_id].to_s
 
     @location = params[:metadata].nil? ? nil : Point.new(params[:metadata][:location])
-
   end
 
+  def persisted?
+    !@id.nil?
+  end
 
+  def save
+
+  end
 end
