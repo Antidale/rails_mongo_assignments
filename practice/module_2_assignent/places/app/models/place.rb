@@ -6,7 +6,8 @@ class Place
     @id = params[:_id].to_s
     @location = Point.new params[:geometry][:geolocation]
 
-    @address_components = params[:address_components].collect { |ac| AddressComponent.new(ac)}
+    @address_components = params[:address_components].nil? ? [] :
+      params[:address_components].collect { |ac| AddressComponent.new(ac)}
     @formatted_address = params[:formatted_address]
   end
 
