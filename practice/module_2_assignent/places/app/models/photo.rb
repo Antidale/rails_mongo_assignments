@@ -12,8 +12,8 @@ class Photo
     Mongoid::Clients.default
   end
 
-  def self.all
-
+  def self.collection
+    self.mongo_client.database.fs
   end
 
   def persisted?
@@ -31,7 +31,7 @@ class Photo
     }
     file = Mongo::Grid::File.new(@contents.read, description)
     @contents.rewind
-    @id = self.class.mongo_client.database.fs.insert_one(file).to_s
+    @id = self.class.collection.insert_one(file).to_s
 
   end
 
