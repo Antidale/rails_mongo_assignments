@@ -106,4 +106,8 @@ class Place
     self.class.collection.delete_one(_id: BSON::ObjectId.from_string(@id))
   end
 
+  def persisted?
+    !@id.nil?
+  end
+
 end
