@@ -92,12 +92,14 @@ class Place
     self.collection.find("geometry.geolocation" => {
       :$near => near
     })
+  end
 
+  def photos offset = 0, limit = 0
+    Photo.find_photos_for_place(@id).skip(offset).limit(limit).collect { |p| Photo.new(p)}
   end
 
   def near max_meters = 0
     self.class.to_places (self.class.near @location, max_meters)
-
   end
 
   def destroy
