@@ -5,7 +5,10 @@ class Photo
   def initialize params = {}
     @id = params[:_id].nil? ? nil : params[:_id].to_s
 
-    @location = params[:metadata].nil? ? nil : Point.new(params[:metadata][:location])
+    unless params[:metadata].nil?
+      @location = Point.new(params[:metadata][:location])
+      @place = params[:metadata][:place]
+    end
   end
 
   def self.mongo_client
@@ -23,6 +26,11 @@ class Photo
   def self.find id
     doc = self.collection.find(_id: BSON::ObjectId.from_string(id)).first
     doc.nil? ? nil : Photo.new(doc)
+  end
+
+  def self.find_photos_for_place id
+    id = BSON::ObjectId.from_string(id) if id.is_a? String
+    self.collection.find("metadata.place" => id)
   end
 
   def persisted?
@@ -44,8 +52,8 @@ class Photo
     if persisted?
       self.class.collection.find(:_id => BSON::ObjectId.from_string(@id)).update_one(:$set => {:metadata => {
         :location => @location.to_hash,
-        :place => @place.to_hash}
-      })
+        :place => @place
+      }})
     else #New record
       coords = EXIFR::JPEG.new(@contents).gps
       @location = Point.new(:lat => coords.latitude, :lng => coords.longitude)
@@ -53,8 +61,7 @@ class Photo
       description = {
         :content_type => "image/jpeg",
         :metadata => {
-          :location => @location.to_hash,
-          :place => @place.to_hash
+          :location => @location.to_hash
         }
       }
       file = Mongo::Grid::File.new(@contents.read, description)
@@ -72,16 +79,15 @@ class Photo
     result ? result[:_id] : nil
   end
 
-  # def place
-  #   Place.find(:_id => BSON::ObjectId.from_string(@place))
-  # end
+  def place
+    @place.presence ? Place.find(@place) : nil
+  end
 
-  # def place=(value)
-  #   #accept BSON::ObjectId, string, or Place instance
-  #   @place = value.to_string if value.is_a? BSON::ObjectId
-  #   @place = value if value.is_a? String
-  #   @place = value.id if value.is_a? Place
-  # end
+  def place=(value)
+    @place = value if value.is_a? BSON::ObjectId
+    @place = BSON::ObjectId.from_string(value) if value.is_a? String
+    @place = BSON::ObjectId.from_string(value.id) if value.is_a? Place
+  end
 
 
 end
