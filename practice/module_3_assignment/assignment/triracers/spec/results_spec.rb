@@ -12,8 +12,8 @@ describe "Module #3 Summative: Implement Results Collection" do
 
   around :each do |example|
     if $continue
-      $continue = false 
-      example.run 
+      $continue = false
+      example.run
       $continue = true unless example.exception
     else
       example.skip
@@ -46,17 +46,17 @@ describe "Module #3 Summative: Implement Results Collection" do
 
     it "Entrant class has fields for name, date, location, and timestamps" do
       expect(Entrant).to have_field(:bib).of_type(Integer)
-      expect(Entrant.new).to respond_to(:bib)    
+      expect(Entrant.new).to respond_to(:bib)
       expect(Entrant).to have_field(:secs).of_type(Float)
       expect(Entrant.new).to respond_to(:secs)
-      expect(Entrant).to have_field(:o).with_alias(:overall).of_type(Placing)      
+      expect(Entrant).to have_field(:o).with_alias(:overall).of_type(Placing)
       expect(Entrant.new).to respond_to(:overall)
-      expect(Entrant.new).to respond_to(:o)      
-      expect(Entrant).to have_field(:gender).of_type(Placing)      
-      expect(Entrant).to have_field(:group).of_type(Placing)      
+      expect(Entrant.new).to respond_to(:o)
+      expect(Entrant).to have_field(:gender).of_type(Placing)
+      expect(Entrant).to have_field(:group).of_type(Placing)
       expect(Entrant).to have_field(:created_at)
       expect(Entrant.new).to respond_to(:created_at)
-      expect(Entrant).to have_field(:updated_at)      
+      expect(Entrant).to have_field(:updated_at)
       expect(Entrant.new).to respond_to(:updated_at)
     end
 
@@ -71,7 +71,7 @@ describe "Module #3 Summative: Implement Results Collection" do
       expect(result["_id"]).to eql e0.id
       expect(result["bib"]).to eql bib
       expect(result["secs"]).to eql secs
-      expect(result["created_at"]).to_not be_nil      
+      expect(result["created_at"]).to_not be_nil
       expect(result["updated_at"]).to_not be_nil
       expect(result["o"]["place"]).to eql overall_place
       expect(result["gender"]["place"]).to eql gender_place
@@ -93,7 +93,7 @@ describe "Module #3 Summative: Implement Results Collection" do
 
     it "LegResult class has a secs field" do
       expect(LegResult).to have_field(:secs).of_type(Float)
-      expect(LegResult.new).to respond_to(:secs)   
+      expect(LegResult.new).to respond_to(:secs)
     end
 
     it "LegResult has an empty calc_ave callback method to be used by subclasses" do
@@ -123,9 +123,9 @@ describe "Module #3 Summative: Implement Results Collection" do
 
   context "rq03" do
     it "LegResult has an M:1 embedded relationship with Entrant" do
-      expect(Entrant).to embed_many(:results).of_type(LegResult)     
-      expect(LegResult).to be_embedded_in(:entrant)    
-    end 
+      expect(Entrant).to embed_many(:results).of_type(LegResult)
+      expect(LegResult).to be_embedded_in(:entrant)
+    end
 
     it "LegResults that are created with Entrant are embedded within it" do
       expect(entrant = Entrant.new).to_not be_nil
@@ -140,10 +140,10 @@ describe "Module #3 Summative: Implement Results Collection" do
 
   context "rq04" do
     it "LegResult has a polymorphic 1:1 embedded relationship with Event" do
-      expect(Entrant).to embed_many(:results).of_type(LegResult)     
-      expect(LegResult).to embed_one(:event).of_type(Event)    
+      expect(Entrant).to embed_many(:results).of_type(LegResult)
+      expect(LegResult).to embed_one(:event).of_type(Event)
       expect(LegResult).to validate_presence_of(:event)
-    end 
+    end
 
     it "Entrant cannot be saved without presence of an event" do
       setup_data_for_testing
@@ -169,20 +169,20 @@ describe "Module #3 Summative: Implement Results Collection" do
       expect(event = race.events.where(:name=>"t2").first).to_not be_nil
       expect(entrant.results.create(:event=>event, :secs=>45)).to_not be_nil
 
-      # Test to ensure that resulting Entant document has embedded results 
-      # where results each have an embedded event      
+      # Test to ensure that resulting Entant document has embedded results
+      # where results each have an embedded event
       expect(entrant_doc = Entrant.find(entrant.id).attributes).to_not be_nil
       expect((result_doc = entrant_doc["results"]).count).to eql 2
       order_val = -100
       event_name_array = Array.new
-      result_doc.each { |r| 
+      result_doc.each { |r|
         expect(r["event"]).to_not be_nil
         expect(r["event"]["o"]).to be >= order_val
         order_val = r["event"]["o"]
         event_name_array.push(r["event"]["n"])
       }
-      expect(event_name_array).to include("t1", "t2")    
-    end    
+      expect(event_name_array).to include("t1", "t2")
+    end
   end
 
   context "rq05" do
@@ -192,7 +192,7 @@ describe "Module #3 Summative: Implement Results Collection" do
 
     it "SwimResult class has a pace_100 field" do
       expect(SwimResult).to have_field(:pace_100).of_type(Float)
-      expect(SwimResult.new).to respond_to(:pace_100)   
+      expect(SwimResult.new).to respond_to(:pace_100)
     end
 
     it "SwimResult has instance method calc_ave that takes no parameters and returns a float" do
@@ -209,7 +209,7 @@ describe "Module #3 Summative: Implement Results Collection" do
 
     it "BikeResult class has a mph field" do
       expect(BikeResult).to have_field(:mph).of_type(Float)
-      expect(BikeResult.new).to respond_to(:mph)   
+      expect(BikeResult.new).to respond_to(:mph)
     end
 
     it "BikeResult has instance method calc_ave that takes no parameters and returns a float" do
@@ -218,7 +218,7 @@ describe "Module #3 Summative: Implement Results Collection" do
       expect(br = BikeResult.new(event:Event.new(d:10, u:"miles"), secs:3600.0)).to_not be_nil
       expect(br.calc_ave).to_not be_nil
       expect(br.calc_ave).to be_a Float
-    end  
+    end
 
     it "RunResult class created" do
       expect(class_exists?("RunResult"))
@@ -226,8 +226,8 @@ describe "Module #3 Summative: Implement Results Collection" do
 
     it "RunResult class has a minute_mile field" do
       expect(RunResult).to have_field(:mmile).with_alias(:minute_mile).of_type(Float)
-      expect(RunResult.new).to respond_to(:mmile)  
-      expect(RunResult.new).to respond_to(:minute_mile)  
+      expect(RunResult.new).to respond_to(:mmile)
+      expect(RunResult.new).to respond_to(:minute_mile)
     end
 
     it "RunResult has instance method calc_ave that takes no parameters and returns a float" do
@@ -236,7 +236,7 @@ describe "Module #3 Summative: Implement Results Collection" do
       expect(br = RunResult.new(event:Event.new(d:10, u:"miles"), secs:3600.0)).to_not be_nil
       expect(br.calc_ave).to_not be_nil
       expect(br.calc_ave).to be_a Float
-    end 
+    end
   end
 
   context "rq06" do
@@ -248,7 +248,7 @@ describe "Module #3 Summative: Implement Results Collection" do
       expect(s.calc_ave.round(1)).to eql 10.0
       expect(s = SwimResult.new(:event=>Event.new(distance:1, units:"miles"), :secs=>160.934)).to_not be_nil
       expect(s.pace_100.round(1)).to eql 10.0
-    end 
+    end
 
     it "BikeResult calc_ave method calculates the average mph based on event" do
       expect(b = BikeResult.new(:event=>Event.new(distance:10, units:"miles"), :secs=>3600)).to_not be_nil
@@ -258,7 +258,7 @@ describe "Module #3 Summative: Implement Results Collection" do
       expect(b.calc_ave.round(2)).to eql 62.14
       expect(b = BikeResult.new(:event=>Event.new(distance:100, units:"kilometers"), :secs=>3600)).to_not be_nil
       expect(b.mph.round(2)).to eql 62.14
-    end 
+    end
 
     it "RunResult calc_ave method calculates average time to run a mile based on event" do
       expect(r = RunResult.new(:event=>Event.new(distance:1, units:"miles"), :secs=>240)).to_not be_nil
@@ -286,12 +286,12 @@ describe "Module #3 Summative: Implement Results Collection" do
     end
   end
 
-  context "rq07" do 
+  context "rq07" do
     it "Entrant has update_total instance method for callback that takes one parameter" do
       expect(Entrant.new).to respond_to(:update_total)
       expect((Entrant.new.method(:update_total).parameters.flatten - [:opt, :req]).count).to eq 1
       expect(Entrant.new.method(:update_total).parameters.flatten).to include(:req)
-    end      
+    end
 
     it "update_total callback updates the Entrants secs field and updated_at with event additions and deletions" do
       expect(entrant = Entrant.create).to_not be_nil
