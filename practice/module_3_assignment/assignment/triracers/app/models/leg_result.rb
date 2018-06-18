@@ -13,12 +13,8 @@ class LegResult
   end
 
   def secs=value
-    @secs = value
+    self[:secs] = value
     calc_ave
-  end
-
-  def secs
-    @secs
   end
 
   validates :event, presence: true
