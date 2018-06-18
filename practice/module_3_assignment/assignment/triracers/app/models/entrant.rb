@@ -1,7 +1,7 @@
 class Entrant
   include Mongoid::Document
   include Mongoid::Timestamps
-  store_in collection: results
+  store_in collection: :results
   field :bib, type: Integer
   field :secs, type: Float
   field :o, as: :overall, type: Placing
