@@ -1,7 +1,7 @@
 class Address
   attr_accessor :city, :state, :location
 
-  def initialize city, state, location
+  def initialize city = nil, state = nil, location = nil
     @city = city
     @state = state
     @location = location
@@ -11,8 +11,6 @@ class Address
   def mongoize
     {:city => @city, :state => @state, :loc => @location.mongoize}
   end
-
-
 
   def self.mongoize obj
     case obj
