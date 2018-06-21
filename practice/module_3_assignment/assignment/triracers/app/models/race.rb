@@ -50,6 +50,10 @@ class Race
     end
   end
 
+  def self.upcoming_available_to racer
+    #self.upcoming.
+  end
+
   ["city", "state"].each do |action|
     #custom getter
     define_method("#{action}") do
