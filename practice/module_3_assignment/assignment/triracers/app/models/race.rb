@@ -51,7 +51,8 @@ class Race
   end
 
   def self.upcoming_available_to racer
-    #self.upcoming.
+    upcoming_race_ids = racer.races.upcoming.pluck(:race).map {|race| race[:_id]}
+    self.upcoming.where(:_id => {:$nin => upcoming_race_ids})
   end
 
   ["city", "state"].each do |action|
