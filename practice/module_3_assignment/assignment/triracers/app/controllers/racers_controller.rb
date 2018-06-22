@@ -23,6 +23,23 @@ class RacersController < ApplicationController
     @races= Race.upcoming_available_to(@racer).order_by(:date.asc)
   end
 
+  def create_entry
+    @racer = Racer.find(params[:racer_id])
+    @race = Race.find(params[:race_id])
+    @entrant = @race.create_entrant(@racer)
+
+    respond_to do | format |
+      if @entrant.valid?
+        format.html { redirect_to @racer, notice: "Race entry was successfully created"}
+        format.json { render :show, status: :created, location: @racer}
+      else
+        format.html { redirect_to @racer, notice: "Invalid registration #{@entrant.errors.messages}"}
+
+        format.json { render json: @entrant.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # POST /racers
   # POST /racers.json
   def create
@@ -71,6 +88,6 @@ class RacersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def racer_params
-      params.require(:racer).permit(:first_name, :last_name, :gender, :birth_year, :city, :state)
+      params.require(:racer).permit(:first_name, :last_name, :gender, :birth_year, :city, :state, :racer_id, :race_id)
     end
 end
