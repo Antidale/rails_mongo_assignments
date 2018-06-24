@@ -23,7 +23,7 @@ module Api
       if !request.accept || request.accept == "*/*"
         render plain: "/api/races/#{params[:id]}"
       else
-        render "race", content_type: "#{request.accept}"
+        render @race, content_type: "#{request.accept}"
       end
     end
 
