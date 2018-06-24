@@ -38,7 +38,8 @@ module Api
       if !request.accept || request.accept == "*/*"
         render plain: params[:race][:name], status: :ok
       else
-
+        @race = Race.create(race_params)
+        render plain: @race.name, status: :created
       end
     end
 
@@ -50,5 +51,10 @@ module Api
 
       end
     end
+
+    private
+      def race_params
+        params.require(:race).permit(:name, :date)
+      end
   end
 end
