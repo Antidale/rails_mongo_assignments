@@ -1,12 +1,12 @@
 module Api
   class RacesController < ApplicationController
     protect_from_forgery with: :null_session
-    before_action :set_race, only: [:show, :edit, :update, :destroy, :results]
-    before_action :set_entrant, only: [:update_racer_result, :racer_results]
+    before_action :set_race, only: [:update, :destroy]
+    before_action :set_entrant, only: [:update_racer_result]
 
     rescue_from Mongoid::Errors::DocumentNotFound do | exception |
       if !request.accept || request.accept == "*/*"
-        render "whoops: cannot find race[#{params[:id]}]", status: :not_found
+        render plain: "whoops: cannot find race[#{params[:id]}]", status: :not_found
       else
         respond_to do |format |
           format.json {render status: :not_found, template: "api/error", locals: {msg: "woops: cannot find race[#{params[:id]}]"} }
@@ -32,6 +32,7 @@ module Api
       if !request.accept || request.accept == "*/*"
         render plain: "/api/races/#{params[:id]}"
       else
+        set_race
         render @race, content_type: "#{request.accept}"
       end
     end
@@ -50,6 +51,7 @@ module Api
       if !request.accept || request.accept == "*/*"
         render plain: "/api/races/#{params[:race_id]}/results"
       else
+        @race = set_race
         @entrants = @race.entrants
         last_modified = @entrants.max(:updated_at)
         if stale?(last_modified: last_modified)
@@ -63,6 +65,7 @@ module Api
       if !request.accept || request.accept == "*/*"
         render plain: "/api/races/#{params[:race_id]}/results/#{params[:id]}"
       else
+        set_race
         set_entrant
         render :partial => 'result', :object => @result
       end
@@ -70,7 +73,9 @@ module Api
 
     def create
       if !request.accept || request.accept == "*/*"
-        render plain: params[:race][:name], status: :ok
+        if params[:race]
+          render plain: params[:race][:name], status: :ok
+        end
       else
         @race = Race.create(race_params)
         render plain: @race.name, status: :created
