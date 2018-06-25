@@ -42,7 +42,11 @@ class Entrant
   end
 
   def update_total result
-    self[:secs] = results.reduce(0) { | total, result| total + result.secs if result.secs && total}
+    self.secs = 0
+    self.results.each do | result |
+      self.secs += result.secs  if result.secs
+    end
+
   end
 
   def the_race
