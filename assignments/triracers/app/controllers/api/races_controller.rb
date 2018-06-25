@@ -82,7 +82,6 @@ module Api
     end
 
     def create_result
-      params.each {|pk, pv| puts "#{pk} => #{pv}"}
       if !request.accept || request.accept == "*/*"
         render plain: :nothing, status: :ok
       else
@@ -125,7 +124,7 @@ module Api
       end
 
       def set_race
-        @race = params[:id] ? Race.find(params[:id]) : Race.find(params[:race_id])
+        @race = params[:race_id] ? Race.find(params[:race_id]) : Race.find(params[:id])
       end
 
       def set_entrant
