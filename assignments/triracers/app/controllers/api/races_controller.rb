@@ -56,7 +56,7 @@ module Api
         last_modified = @entrants.max(:updated_at)
         if stale?(last_modified: last_modified)
           fresh_when last_modified: last_modified
-          render json: @entrants
+          @entrants
         end
       end
     end
@@ -67,6 +67,7 @@ module Api
       else
         set_race
         set_entrant
+        Rails.logger.debug(api_race_result_url(@result.race.id, @result))
         render :partial => 'result', :object => @result
       end
     end

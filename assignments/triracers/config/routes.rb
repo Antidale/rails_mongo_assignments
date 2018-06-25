@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   namespace :api do
     resources :races do
       get "results" => "races#results"
-      get "results/:id" => "races#racer_results"
+      get "results/:id" => "races#racer_results", :as => "result"
       post "results" => "races#create_result"
       patch "results/:id" => "races#update_racer_result"
     end
