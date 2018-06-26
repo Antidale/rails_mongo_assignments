@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @name.date %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @name.city %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @name.state %>
+</p>
+
+<p>
+  <strong>Swim distance:</strong>
+  <%= @name.swim_distance %>
+</p>
+
+<p>
+  <strong>Swim units:</strong>
+  <%= @name.swim_units %>
+</p>
+
+<p>
+  <strong>Bike distance:</strong>
+  <%= @name.bike_distance %>
+</p>
+
+<p>
+  <strong>Bike units:</strong>
+  <%= @name.bike_units %>
+</p>
+
+<p>
+  <strong>Run distance:</strong>
+  <%= @name.run_distance %>
+</p>
+
+<p>
+  <strong>Run units:</strong>
+  <%= @name.run_units %>
+</p>
+
+<%= link_to 'Edit', edit_name_path(@name) %> |
+<%= link_to 'Back', names_path %>
